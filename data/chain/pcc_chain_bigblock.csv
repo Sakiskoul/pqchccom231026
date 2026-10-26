@@ -1,0 +1,5 @@
+blocks,txs_total,txs_per_block,group_budget,groups_per_block,proof_events_total,group_proof_bytes,block_proof_bytes,chain_proof_bytes,group_prove_ms,block_step_ms,chain_step_ms,block_total_ms,chain_verify_ms,peak_mb,cum_prove_s,public_inputs
+1,16,16,4,4,9,347648,402524,402540,1268.3,5317.3,1346.6,6585.6,11.495,1804,7.9,85
+2,32,16,4,4,18,347648,402524,402540,1343.0,5366.8,1331.4,6709.9,11.596,1804,16.0,85
+4,64,16,4,4,36,347648,402524,402540,1266.8,5310.4,1375.4,6577.2,11.593,1847,32.0,85
+8,128,16,4,4,72,347648,402524,402540,1320.4,5321.9,1347.5,6642.3,11.597,1878,64.2,85

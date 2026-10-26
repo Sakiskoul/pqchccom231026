@@ -1,0 +1,28 @@
+layer,attack,binding mechanism,api outcome,circuit outcome
+chain,honest block proof and honest previous chain proof,none needed,ACCEPTED,ACCEPTED
+block,honest aggregated block proof against its public data,none needed,ACCEPTED,ACCEPTED
+block,honest mixed-occupancy plan under one fixed circuit,constant group VK with padded occupancy,ACCEPTED,ACCEPTED
+group,forged WOTS signature,in-circuit chain fold to the committed key,witness-conflict,witness-conflict
+group,tampered message,in-circuit message-to-digit derivation,witness-conflict,witness-conflict
+group,reordered transactions within a group,ordered group digest,instance-mismatch,instance-mismatch
+group,occupancy larger than the fixed circuit budget,fixed number of circuit slots,producer-error,not-applicable
+group,published group budget inconsistent with the circuit,budget is a circuit constant and a proof public input,reject(verify),reject(verify)
+block,group proof replayed from another block,group block-id public input,producer-error,witness-conflict
+block,duplicated group proof,group index equals folded count,producer-error,witness-conflict
+block,omitted group,group index equals folded count,producer-error,witness-conflict
+block,reordered groups,group index equals folded count,producer-error,witness-conflict
+block,valid group proof under a verification key outside the permitted set,constant group VK and circuit identifier in the accumulator,producer-error,witness-conflict
+block,outside verification key paired with the allowed circuit identifier,constant group VK in the accumulator,witness-conflict,witness-conflict
+block,proof produced by a group circuit with another budget,fixed proof shape and constant group VK,producer-error,witness-conflict
+block,corrupted block-proof bytes,FRI and Merkle commitments,reject(verify),not-applicable
+block,fabricated transaction commitment,block public outputs,reject(verify),not-applicable
+chain,wrong block height,height = previous height + 1,witness-conflict,witness-conflict
+chain,wrong previous block hash,prev hash = previous tip hash,witness-conflict,witness-conflict
+chain,omitted block,height and previous-tip continuity,witness-conflict,witness-conflict
+chain,block proof replayed at another height,block id binds height,witness-conflict,witness-conflict
+chain,reordered blocks,block id binds height and previous hash,witness-conflict,witness-conflict
+chain,block proof for a different transaction root,block id binds the aggregate's own commitment,witness-conflict,witness-conflict
+chain,circuit-version substitution,version inside the block id,witness-conflict,witness-conflict
+chain,corrupted chain-proof bytes,FRI and Merkle commitments,reject(verify),not-applicable
+chain,wrong genesis commitment,genesis carried as a public input,reject(verify),not-applicable
+chain,valid block proof under a shape-compatible foreign verification key,constant block verification key in the chain step,witness-conflict,witness-conflict
