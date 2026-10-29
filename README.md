@@ -68,6 +68,15 @@ pcb_coordinator --k K --g G --workers 2 --spawn-workers 2 --mem 4096 --scheduler
   --chain-in anchor.proof --chain-out chain.proof --chain-height 2
 ```
 
+**Section 9.2 and Figure 3, commitment hashing and persistent calibration.** The same two-core
+setting as Table 9. The binding benchmark prints its records, and the calibration benchmark pins
+its two workers to the listed cores. Data are in `commitment_hashing/` and `persistent/`.
+
+```sh
+RAYON_NUM_THREADS=2 taskset -c 6,8 pcb_binding_bench G 10
+RAYON_NUM_THREADS=2 taskset -c 6,8 pcb_adaptation_bench OUT data/budget/profile_g4.csv 3 6,8
+```
+
 **Table 11, history authentication.** The inputs are the persisted histories and proofs.
 
 ```sh

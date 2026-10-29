@@ -68,6 +68,26 @@ class ReportedValues(unittest.TestCase):
         self.assertEqual((f(g4["group_s"], 2), f(g4["accumulation_s"], 2), f(g4["chain_s"], 2)),
                          ("5.15", "22.36", "5.65"))
 
+    def test_commitment_hashing(self):
+        c = tables.commitment_hashing()
+        self.assertEqual([(c[g]["plain_gates"], c[g]["digest_gates"]) for g in (2, 4, 8)],
+                         [(2439, 2445), (4877, 4888), (9753, 9774)])
+        self.assertEqual([c[g]["degrees"] for g in (2, 4, 8)], [(12, 12), (13, 13), (14, 14)])
+        self.assertTrue(all(c[g]["proof_bytes"][0] == c[g]["proof_bytes"][1] for g in (2, 4, 8)))
+        self.assertEqual([[f(v, 3) for v in c[g]["digest_over_plain"]] for g in (2, 4, 8)],
+                         [["0.978", "0.875", "1.156"], ["0.987", "0.938", "1.068"], ["1.005", "0.951", "1.056"]])
+
+    def test_persistent(self):
+        p = tables.persistent()
+        self.assertEqual([f(p[k]["total_s"], 2) for k in ("static", "ewma", "periodic")],
+                         ["184.44", "158.02", "180.31"])
+        self.assertEqual([f(v, 3) for v in p["ewma"]["static_over_policy"]], ["1.167", "1.162", "1.181"])
+        self.assertEqual([f(v, 3) for v in p["periodic"]["static_over_policy"]], ["1.025", "1.019", "1.025"])
+        self.assertEqual(f(p["periodic"]["calibration_s"], 2), "20.23")
+        self.assertEqual(p["static"]["worker0_groups"], [[3]] * 12)
+        self.assertEqual(p["ewma"]["worker0_groups"][5:10], [[2], [1], [1], [1], [2]])
+        self.assertEqual(p["periodic"]["worker0_groups"][9], [3])
+
     def test_two_host(self):
         t = tables.two_host()
         self.assertEqual([f(v, 2) for v in t[20]["maxfit_over_resource"]], ["0.90", "0.78", "0.96"])

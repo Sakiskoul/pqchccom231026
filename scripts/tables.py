@@ -159,6 +159,45 @@ def budget():
     return out
 
 
+def commitment_hashing():
+    out = {}
+    for g in (2, 4, 8):
+        data = rows(f"commitment_hashing/binding_g{g}.csv")
+        pairs = defaultdict(dict)
+        for r in data:
+            pairs[int(r["rep"])][r["bind"]] = r
+        plain, digest = (next(r for r in data if r["bind"] == bind) for bind in ("false", "true"))
+        out[g] = {
+            "plain_gates": int(plain["gates"]),
+            "digest_gates": int(digest["gates"]),
+            "degrees": (int(plain["degree"]), int(digest["degree"])),
+            "proof_bytes": (int(plain["proof_bytes"]), int(digest["proof_bytes"])),
+            "digest_over_plain": describe(float(p["true"]["prove_ms"]) / float(p["false"]["prove_ms"])
+                                          for p in pairs.values()),
+        }
+    return out
+
+
+def persistent():
+    data = rows("persistent/blocks.csv")
+    reps = sorted({int(r["rep"]) for r in data})
+
+    def total(policy, rep, field="total_ms"):
+        return sum(float(r[field]) for r in data if r["policy"] == policy and int(r["rep"]) == rep) / 1000
+
+    out = {}
+    for policy in ("static", "ewma", "periodic"):
+        out[policy] = {
+            "total_s": statistics.median(total(policy, rep) for rep in reps),
+            "static_over_policy": describe(total("static", rep) / total(policy, rep) for rep in reps),
+            "calibration_s": statistics.median(total(policy, rep, "calibration_ms") for rep in reps),
+            "worker0_groups": [sorted({int(r["worker0_groups"]) for r in data
+                                       if r["policy"] == policy and int(r["block"]) == block})
+                               for block in range(1, 13)],
+        }
+    return out
+
+
 def two_host():
     out = {}
     for k, name in ((20, "k20"), (64, "k64")):
@@ -279,6 +318,7 @@ def archival():
 SECTIONS = {
     "cost_model": cost_model, "query_cost": query_cost, "chain": chain, "adversarial": adversarial,
     "scaling": scaling, "faults": faults, "aggregation": aggregation, "budget": budget,
+    "commitment_hashing": commitment_hashing, "persistent": persistent,
     "two_host": two_host, "replay": replay, "pipeline": pipeline, "wide_area": wide_area,
     "same_host": same_host, "scheduling": scheduling, "archival": archival,
 }
